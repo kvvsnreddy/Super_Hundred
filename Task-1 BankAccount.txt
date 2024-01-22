@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+
+class BankAccount {
+private:
+    std::string accountHolderName;
+    std::string accountNumber;
+    double balance;
+
+public:
+    BankAccount(const std::string& holderName, const std::string& accNumber, double initialBalance)
+        : accountHolderName(holderName), accountNumber(accNumber), balance(initialBalance) {}
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            std::cout << "Deposit successful. Current balance: " << balance << std::endl;
+        } else {
+            std::cout << "Invalid deposit amount." << std::endl;
+        }
+    }
+    void withdraw(double amount) {
+        if (amount > 0) {
+            if (amount <= balance) {
+                balance -= amount;
+                std::cout << "Withdrawal successful. Current balance: " << balance << std::endl;
+            } else {
+                std::cout << "Insufficient funds. Withdrawal failed." << std::endl;
+            }
+        } else {
+            std::cout << "Invalid withdrawal amount." << std::endl;
+        }
+    }
+    void displayBalance() const {
+        std::cout << "Account Holder: " << accountHolderName << std::endl;
+        std::cout << "Account Number: " << accountNumber << std::endl;
+        std::cout << "Current Balance: " << balance << std::endl;
+    }
+};
+
+int main() {
+    std::string name, accNumber;
+    double initialBalance;
+    std::cout << "Enter account holder's name: ";
+    std::getline(std::cin, name);
+    std::cout << "Enter account number: ";
+    std::getline(std::cin, accNumber);
+    std::cout << "Enter initial balance: ";
+    std::cin >> initialBalance;
+    BankAccount myAccount(name, accNumber, initialBalance);
+    double depositAmount, withdrawAmount;
+    std::cout << "Enter amount to deposit: ";
+    std::cin >> depositAmount;
+    myAccount.deposit(depositAmount);
+    std::cout << "Enter amount to withdraw: ";
+    std::cin >> withdrawAmount;
+    myAccount.withdraw(withdrawAmount);
+    myAccount.displayBalance();
+    return 0;
+}
