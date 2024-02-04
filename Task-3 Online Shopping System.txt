@@ -1,0 +1,101 @@
+class Product:
+    def __init__(self, product_id, name, price, stock_quantity):
+        self.product_id = product_id
+        self.name = name
+        self.price = price
+        self.stock_quantity = stock_quantity
+
+class ShoppingCart:
+    def __init__(self):
+        self.items = {}
+
+    def add_product(self, product, quantity):
+        if product.product_id in self.items:
+            self.items[product.product_id] += quantity
+        else:
+            self.items[product.product_id] = quantity
+
+    def remove_product(self, product, quantity):
+        if product.product_id in self.items:
+            self.items[product.product_id] = max(0, self.items[product.product_id] - quantity)
+
+    def view_cart(self):
+        print("Shopping Cart:")
+        for product_id, quantity in self.items.items():
+            print(f"{quantity} x {product_id}")
+
+class User:
+    def __init__(self, user_id, username):
+        self.user_id = user_id
+        self.username = username
+        self.shopping_cart = ShoppingCart()
+        self.order_history = []
+
+    def place_order(self):
+        order_summary = {}
+        total_price = 0
+
+        for product_id, quantity in self.shopping_cart.items.items():
+            product = get_product_by_id(product_id)
+            if product and quantity <= product.stock_quantity:
+                order_summary[product.name] = quantity
+                total_price += product.price * quantity
+                product.stock_quantity -= quantity
+
+        if order_summary:
+            self.order_history.append({"items": order_summary, "total_price": total_price})
+            self.shopping_cart.items.clear()
+            print("Order placed successfully!")
+        else:
+            print("Order failed. Please check the stock availability.")
+
+def get_product_by_id(product_id):
+    # In a real system, this function would retrieve product details from a database
+    products = {
+        1: Product(1, "Laptop", 1000, 10),
+        2: Product(2, "Phone", 500, 20)
+    }
+    return products.get(product_id)
+
+# Main Program
+user_id = int(input("Enter your user ID: "))
+username = input("Enter your username: ")
+
+user = User(user_id, username)
+
+while True:
+    print("\n1. Add product to cart")
+    print("2. Remove product from cart")
+    print("3. View cart")
+    print("4. Place order")
+    print("5. Exit")
+
+    choice = int(input("Enter your choice (1-5): "))
+
+    if choice == 1:
+        product_id = int(input("Enter the product ID to add to the cart: "))
+        quantity = int(input("Enter the quantity: "))
+        product = get_product_by_id(product_id)
+        if product:
+            user.shopping_cart.add_product(product, quantity)
+            print("Product added to cart.")
+
+    elif choice == 2:
+        product_id = int(input("Enter the product ID to remove from the cart: "))
+        quantity = int(input("Enter the quantity: "))
+        product = get_product_by_id(product_id)
+        if product:
+            user.shopping_cart.remove_product(product, quantity)
+            print("Product removed from cart.")
+
+    elif choice == 3:
+        user.shopping_cart.view_cart()
+
+    elif choice == 4:
+        user.place_order()
+
+    elif choice == 5:
+        break
+
+    else:
+        print("Invalid choice. Please enter a number between 1 and 5.")
